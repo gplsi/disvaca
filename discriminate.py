@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 WORDS = {
     "ca": [
         "abaixin",
@@ -1965,16 +1967,20 @@ def is_ca(text, tokenizer=None):
 
 
 def check_language(text, language, tokenizer=None):
-    if isinstance(text, str):
-        if tokenizer is None:
-            tokenizer = get_tokenizer()
-        doc = tokenizer(text)
-        words = [token.text.lower() for token in doc if token.is_alpha]
-    else:
-        words = text
+    words = get_words(text, tokenizer) if isinstance(text, str) else text
     return any((word in words) for word in WORDS[language])
 
 
+@lru_cache(1)
+def get_words(text, tokenizer=None):
+    """Get words from the text."""
+    if tokenizer is None:
+        tokenizer = get_tokenizer()
+    doc = tokenizer(text)
+    return [token.text.lower() for token in doc if token.is_alpha]
+
+
+@lru_cache(1)
 def get_tokenizer():
     import spacy
 
