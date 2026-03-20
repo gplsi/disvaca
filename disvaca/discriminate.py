@@ -75,15 +75,22 @@ class VACADiscriminator:
             language for language in self.words if self.check_language(words, language)
         }
 
-    def get_ratios(self, input):
-        """Get the ratio of words belonging to each language in the text.
-        """
+    def get_counts(self, input):
+        """Get the count of words belonging to each language in the text."""
         words = self.get_words_if_needed(input)
-        
+
+        return {
+            language: self.count_language_words(words, language)
+            for language in self.words
+        }
+
+    def get_ratios(self, input):
+        """Get the ratio of words belonging to each language in the text."""
+        words = self.get_words_if_needed(input)
+
         lang_counts = {
             language: self.count_language_words(words, language)
             for language in self.words
-        
         }
         total_matched = sum(lang_counts.values())
 
@@ -91,6 +98,5 @@ class VACADiscriminator:
             return {language: 0.0 for language in self.words}
 
         return {
-            language: lang_counts[language] / total_matched
-            for language in self.words
+            language: lang_counts[language] / total_matched for language in self.words
         }
