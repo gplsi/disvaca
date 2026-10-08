@@ -1,4 +1,5 @@
 import spacy
+from functools import lru_cache
 
 
 class VACADiscriminator:
@@ -41,6 +42,7 @@ class VACADiscriminator:
         """Get the SpaCy tokenizer for Catalan (also works for Valencian)."""
         return spacy.load("ca_core_news_sm")
 
+    @lru_cache(maxsize=1)
     def get_words(self, input):
         """Get words from the text."""
         doc = self.tokenizer(input)
@@ -57,6 +59,29 @@ class VACADiscriminator:
     def is_ca(self, input):
         """Check if the text contains any Catalan words."""
         return self.check_language(input, "ca")
+
+    def is_not_exclusively_from_ca(self, input):
+        """Check if the text contains any Valencian words or, if not, it does not contain any exclusively Catalan words."""
+        return self.is_not_exclusively_from_other_language(
+            input, language="va", other_language="ca"
+        )
+
+    def is_not_exclusively_from_va(self, input):
+        """Check if the text contains any Catalan words or, if not, it does not contain any exclusively Valencian words."""
+        return self.is_not_exclusively_from_other_language(
+            input, language="ca", other_language="va"
+        )
+    
+    def is_not_exclusively_from_other_language(self, input, *, language, other_language):
+        """Check if the text contains any words from the specified language or, if not, it does not contain any exclusively words from the other specified language."""
+        words = self.get_words_if_needed(input)
+        uses_other_language = False
+        for word in map(str.lower, words):
+            if word in self.words[language]:
+                return True
+            if word in self.words[other_language]:
+                uses_other_language = True
+        return not uses_other_language
 
     def check_language(self, input, language):
         """Check if the text contains any words from the specified language."""
