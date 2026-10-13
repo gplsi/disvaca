@@ -126,6 +126,32 @@ What it does:
 
 You can then inspect or reuse [data/discriminative.json](data/discriminative.json) in your own workflows.
 
+## Citation Guidelines 
+
+If you use `disvaca` in academic research, please cite the following resource:
+
+```
+@misc{esvaca2025,
+  author       = {Consuegra-Ayala, Juan Pablo},
+  title        = {disvaca: Valencian–Catalan Word Discriminator},
+  year         = {2026},
+  institution  = {Language and Information Systems Group (GPLSI) and Centro de Inteligencia Digital (CENID), University of Alicante (UA)},
+  howpublished = {\url{https://github.com/gplsi/disvaca}}
+}
+```
+
+When using the default configuration or any other that uses the `es_vaca` partition, additionally cite the following dataset:
+
+```
+@misc{esvaca2025,
+  author       = {Sevilla-Requena, Luc{\'\i}a and Picazo-Izquierdo, Alicia and Lloret, Elena and Espinosa-Zaragoza, Isabel and Maestre, Mar{\'\i}a Mir{\'o} and Garc{\'\i}a-Cerd{\'\a}, Raul and Consuegra-Ayala, Juan Pablo and Mu{\~n}oz Guillena, Rafael},
+  title        = {ES\_VACA Dataset},
+  year         = {2025},
+  institution  = {Language and Information Systems Group (GPLSI) and Centro de Inteligencia Digital (CENID), University of Alicante (UA)},
+  howpublished = {\url{https://huggingface.co/datasets/gplsi/es_vaca}}
+}
+```
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. See the `LICENSE` file for details.
