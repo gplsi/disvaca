@@ -1,3 +1,4 @@
+import math
 import spacy
 from functools import lru_cache
 
@@ -45,8 +46,25 @@ class VACADiscriminator:
     @lru_cache(maxsize=1)
     def get_words(self, input):
         """Get words from the text."""
+        if len(input) >= 1000000:
+            return sum((self.get_words(chunk) for chunk in self.chunk_text(input)), [])
         doc = self.tokenizer(input)
         return [token.text.lower() for token in doc if token.is_alpha]
+
+    # Example usage: self.chunk_text("111112222233333444445555566666", 10)
+    # Example usage: self.chunk_text("1111.2222.3333.4444.5555.6666.", 5)
+    # Example usage: self.chunk_text("1111.2222.3333.4444.5555.6666.", 10)
+    # Example usage: self.chunk_text("1111.2222.3333.4444.5555.6666.", 15)
+    def chunk_text(self, text, chunk_size=1000000, delimiter="."):
+        n_optimal_chunks = math.ceil(len(text) / chunk_size)
+        adjusted_size = math.ceil(len(text) / n_optimal_chunks)
+        last_end = 0
+        while last_end < len(text):
+            rightmost_dot = text.rfind(delimiter, last_end, last_end + adjusted_size)
+            if rightmost_dot < 0:
+                rightmost_dot = last_end + adjusted_size
+            yield text[last_end : rightmost_dot + 1]
+            last_end = rightmost_dot + 1
 
     def get_words_if_needed(self, input):
         """Get words from the text if it's a string, otherwise return it as is."""
@@ -71,8 +89,10 @@ class VACADiscriminator:
         return self.is_not_exclusively_from_other_language(
             input, language="ca", other_language="va"
         )
-    
-    def is_not_exclusively_from_other_language(self, input, *, language, other_language):
+
+    def is_not_exclusively_from_other_language(
+        self, input, *, language, other_language
+    ):
         """Check if the text contains any words from the specified language or, if not, it does not contain any exclusively words from the other specified language."""
         words = self.get_words_if_needed(input)
         uses_other_language = False
